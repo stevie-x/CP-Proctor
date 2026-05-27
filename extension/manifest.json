@@ -1,20 +1,24 @@
 {
-    "manifest_version": 3,
-    "name": "CP Proctor",
-    "version": "1.0",
-    "description": "Real-time proctoring for competitive programming platforms",
-    "permissions": [
-      "activeTab",
-      "tabs",
-      "storage"
-    ],
-    "background": {
-      "service_worker": "background.js"
-    },
-    "content_scripts": [
-      {
-        "matches": ["<all_urls>"],
-        "js": ["content.js"]
-      }
-    ]
-  }
+  "manifest_version": 3,
+  "name": "CP Proctor",
+  "version": "1.0",
+  "description": "Real-time proctoring for competitive programming platforms",
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "storage"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "CP Proctor"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ]
+}

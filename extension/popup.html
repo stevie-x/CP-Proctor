@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      width: 400px;
+      font-family: monospace;
+      font-size: 12px;
+      padding: 10px;
+      background: #1e1e1e;
+      color: #d4d4d4;
+    }
+    h2 {
+      color: #569cd6;
+      margin: 0 0 10px 0;
+    }
+    .event {
+      padding: 5px;
+      margin: 3px 0;
+      border-left: 3px solid #569cd6;
+      background: #2d2d2d;
+    }
+    .TAB_SWITCH { border-color: #f44747; }
+    .URL_CHANGE { border-color: #dcdcaa; }
+    .KEYSTROKE { border-color: #4ec9b0; }
+    .PASTE_EVENT { border-color: #ce9178; }
+    .VISIBILITY_CHANGE { border-color: #c586c0; }
+    .time { color: #888; font-size: 10px; }
+    button {
+      background: #f44747;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2>CP Proctor</h2>
+  <div id="events"></div>
+  <button id="clear">Clear Events</button>
+  <script src="popup.js"></script>
+</body>
+</html>
