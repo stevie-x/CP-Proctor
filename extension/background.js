@@ -1,4 +1,3 @@
-
 // Save event to chrome.storage.local
 function logEvent(type, data) {
   const event = {
@@ -7,7 +6,6 @@ function logEvent(type, data) {
     data: data
   };
 
-  // Read existing events, append new one, save back
   chrome.storage.local.get(["events"], (result) => {
     const events = result.events || [];
     events.push(event);
@@ -20,6 +18,7 @@ function logEvent(type, data) {
 chrome.tabs.onActivated.addListener((activeInfo) => {
   chrome.tabs.get(activeInfo.tabId, (tab) => {
     logEvent("TAB_SWITCH", { url: tab.url, title: tab.title });
+    checkContestUrl(tab.url);
   });
 });
 
@@ -27,18 +26,41 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete") {
     logEvent("URL_CHANGE", { url: tab.url, title: tab.title });
+    checkContestUrl(tab.url);
   }
 });
+
+// ===== HackerRank URL Enforcement =====
+function checkContestUrl(currentUrl) {
+  chrome.storage.local.get(["contestActive"], (result) => {
+    if (!result.contestActive) return;
+    if (!currentUrl) return;
+
+    const isHackerRank = currentUrl.includes("hackerrank.com");
+    const isExtensionPage = currentUrl.includes("chrome-extension://");
+
+    if (!isHackerRank && !isExtensionPage) {
+      logEvent("URL_VIOLATION", { url: currentUrl, reason: "Navigated away from HackerRank during active contest" });
+    }
+  });
+}
 
 // Receive messages from content.js
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   logEvent(message.type, message.data);
+
+  if (message.type === "CONTEST_STARTED") {
+    chrome.storage.local.set({ contestActive: true });
+  }
+  if (message.type === "FULLSCREEN_EXIT") {
+    logEvent("LOCKDOWN_VIOLATION", { reason: "Exited fullscreen during active contest", url: message.data.url });
+  }
 });
 
+// ===== Codeforces API =====
 const CF_HANDLE = "stevie_x";
 const CF_API = "https://codeforces.com/api";
 
-// Fetch user's recent submissions
 async function fetchRecentSubmissions() {
   const response = await fetch(
     `${CF_API}/user.status?handle=${CF_HANDLE}&from=1&count=10`
@@ -61,7 +83,6 @@ async function fetchRecentSubmissions() {
   console.log("[CP Proctor] Submissions fetched:", submissions);
 }
 
-// Fetch active or recent contest
 async function fetchContestStatus() {
   const response = await fetch(
     `${CF_API}/user.rating?handle=${CF_HANDLE}`
@@ -75,11 +96,6 @@ async function fetchContestStatus() {
   console.log("[CP Proctor] Last contest:", lastContest);
 }
 
-// Poll every 30 seconds
-fetchRecentSubmissions();
-fetchContestStatus();
-setInterval(fetchRecentSubmissions, 30000);
-
 function computeRiskScore() {
   chrome.storage.local.get(["events", "submissions"], (result) => {
     const events = result.events || [];
@@ -91,7 +107,7 @@ function computeRiskScore() {
     acceptedSubs.forEach(sub => {
       const window = events.filter(e =>
         e.timestamp <= sub.timestamp &&
-        e.timestamp >= sub.timestamp - 120000 // 2 min before
+        e.timestamp >= sub.timestamp - 120000
       );
       if (window.length > 0) {
         flagged.push({ submission: sub, events: window });
@@ -104,3 +120,5 @@ function computeRiskScore() {
 }
 
 fetchRecentSubmissions().then(computeRiskScore);
+fetchContestStatus();
+setInterval(fetchRecentSubmissions, 30000);

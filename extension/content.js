@@ -1,4 +1,3 @@
-// Keystroke timing
 function createStartButton() {
   if (document.getElementById("cp-proctor-start-btn")) return;
 
@@ -29,6 +28,7 @@ function createStartButton() {
         type: "CONTEST_STARTED",
         data: { url: window.location.href }
       });
+      chrome.storage.local.set({ contestActive: true, contestUrl: window.location.href });
     });
   });
 
@@ -36,6 +36,7 @@ function createStartButton() {
 }
 
 createStartButton();
+
 let lastKeyTime = null;
 
 document.addEventListener("keydown", (e) => {
@@ -52,7 +53,6 @@ document.addEventListener("keydown", (e) => {
   });
 });
 
-// Visibility change — user left the tab
 document.addEventListener("visibilitychange", () => {
   chrome.runtime.sendMessage({
     type: "VISIBILITY_CHANGE",
@@ -63,7 +63,6 @@ document.addEventListener("visibilitychange", () => {
   });
 });
 
-// Paste detection
 document.addEventListener("paste", (e) => {
   const text = e.clipboardData.getData("text");
   chrome.runtime.sendMessage({
