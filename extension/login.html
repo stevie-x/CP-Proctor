@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      width: 350px;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      padding: 20px;
+      background: #1e1e1e;
+      color: #d4d4d4;
+    }
+    h2 {
+      color: #569cd6;
+      margin: 0 0 20px 0;
+      text-align: center;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin: 6px 0 12px 0;
+      background: #2d2d2d;
+      border: 1px solid #444;
+      color: #d4d4d4;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      margin: 6px 0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    #loginBtn { background: #569cd6; color: white; }
+    #signupBtn { background: #3a3a3a; color: #d4d4d4; }
+    select {
+      width: 100%;
+      padding: 8px;
+      margin: 6px 0 12px 0;
+      background: #2d2d2d;
+      border: 1px solid #444;
+      color: #d4d4d4;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    #status {
+      margin-top: 10px;
+      padding: 8px;
+      border-radius: 4px;
+      text-align: center;
+      display: none;
+    }
+    .success { background: #1e4d2b; color: #4ec9b0; display: block !important; }
+    .error { background: #4d1e1e; color: #f44747; display: block !important; }
+  </style>
+</head>
+<body>
+  <h2>CP Proctor</h2>
+  <label>Email</label>
+  <input type="email" id="email" placeholder="you@example.com" />
+  <label>Password</label>
+  <input type="password" id="password" placeholder="••••••••" />
+  <label>Role</label>
+  <select id="role">
+    <option value="user">Participant</option>
+    <option value="admin">Admin / Organizer</option>
+  </select>
+  <button id="loginBtn">Sign In</button>
+  <button id="signupBtn">Sign Up</button>
+  <div id="status"></div>
+  <script src="login.js"></script>
+</body>
+</html>

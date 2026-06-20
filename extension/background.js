@@ -1,3 +1,4 @@
+
 // Save event to chrome.storage.local
 function logEvent(type, data) {
   const event = {
