@@ -1,4 +1,41 @@
 // Keystroke timing
+function createStartButton() {
+  if (document.getElementById("cp-proctor-start-btn")) return;
+
+  const btn = document.createElement("button");
+  btn.id = "cp-proctor-start-btn";
+  btn.textContent = "Start Contest (Enter Fullscreen)";
+  btn.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 999998;
+    padding: 14px 24px;
+    font-size: 15px;
+    font-weight: bold;
+    background: #569cd6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  `;
+
+  btn.addEventListener("click", () => {
+    document.documentElement.requestFullscreen().then(() => {
+      btn.remove();
+      chrome.runtime.sendMessage({
+        type: "CONTEST_STARTED",
+        data: { url: window.location.href }
+      });
+    });
+  });
+
+  document.body.appendChild(btn);
+}
+
+createStartButton();
 let lastKeyTime = null;
 
 document.addEventListener("keydown", (e) => {
