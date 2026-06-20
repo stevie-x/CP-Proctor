@@ -1,3 +1,6 @@
+const SUPABASE_URL = "https://hldwnmuptiidijgmuufb.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhsZHdubXVwdGlpZGlqZ211dWZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NjEyMzYsImV4cCI6MjA5NzMzNzIzNn0.WuMr_ebkW950OaF8-k25BdlM1F4KRpFvxBMC9wwuC6o";
+
 // Save event to chrome.storage.local
 function logEvent(type, data) {
   const event = {
@@ -13,6 +16,30 @@ function logEvent(type, data) {
     console.log("[CP Proctor]", event);
   });
 }
+
+// Push a violation to Supabase
+async function reportViolation(type, details) {
+  const stored = await chrome.storage.local.get(["user", "activeSession"]);
+  if (!stored.user || !stored.activeSession) return;
+
+  await fetch(`${SUPABASE_URL}/rest/v1/violations`, {
+    method: "POST",
+    headers: {
+      "apikey": SUPABASE_ANON_KEY,
+      "Authorization": `Bearer ${stored.user.token}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      session_code: stored.activeSession,
+      user_email: stored.user.email,
+      violation_type: type,
+      details: details
+    })
+  });
+  console.log("[CP Proctor] Violation reported to Supabase:", type);
+}
+
+const VIOLATION_TYPES = ["URL_VIOLATION", "LOCKDOWN_VIOLATION", "FULLSCREEN_EXIT"];
 
 // Tab switch detection
 chrome.tabs.onActivated.addListener((activeInfo) => {
@@ -30,7 +57,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   }
 });
 
-// ===== HackerRank URL Enforcement =====
+// HackerRank URL Enforcement
 function checkContestUrl(currentUrl) {
   chrome.storage.local.get(["contestActive"], (result) => {
     if (!result.contestActive) return;
@@ -40,7 +67,9 @@ function checkContestUrl(currentUrl) {
     const isExtensionPage = currentUrl.includes("chrome-extension://");
 
     if (!isHackerRank && !isExtensionPage) {
-      logEvent("URL_VIOLATION", { url: currentUrl, reason: "Navigated away from HackerRank during active contest" });
+      const details = { url: currentUrl, reason: "Navigated away from HackerRank during active contest" };
+      logEvent("URL_VIOLATION", details);
+      reportViolation("URL_VIOLATION", details);
     }
   });
 }
@@ -53,7 +82,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     chrome.storage.local.set({ contestActive: true });
   }
   if (message.type === "FULLSCREEN_EXIT") {
-    logEvent("LOCKDOWN_VIOLATION", { reason: "Exited fullscreen during active contest", url: message.data.url });
+    const details = { reason: "Exited fullscreen during active contest", url: message.data.url };
+    logEvent("LOCKDOWN_VIOLATION", details);
+    reportViolation("LOCKDOWN_VIOLATION", details);
   }
 });
 
