@@ -22,13 +22,20 @@ function createStartButton() {
   `;
 
   btn.addEventListener("click", () => {
-    document.documentElement.requestFullscreen().then(() => {
-      btn.remove();
-      chrome.runtime.sendMessage({
-        type: "CONTEST_STARTED",
-        data: { url: window.location.href }
+    chrome.storage.local.get(["activeSession"], (result) => {
+      if (!result.activeSession) {
+        alert("You must join a session before starting the contest. Open the CP Proctor extension and enter a session code.");
+        return;
+      }
+
+      document.documentElement.requestFullscreen().then(() => {
+        btn.remove();
+        chrome.runtime.sendMessage({
+          type: "CONTEST_STARTED",
+          data: { url: window.location.href }
+        });
+        chrome.storage.local.set({ contestActive: true, contestUrl: window.location.href });
       });
-      chrome.storage.local.set({ contestActive: true, contestUrl: window.location.href });
     });
   });
 
@@ -72,6 +79,38 @@ document.addEventListener("paste", (e) => {
       url: window.location.href
     }
   });
+});
+
+// ===== Kick Screen =====
+function showKickedScreen() {
+  document.body.innerHTML = "";
+  const overlay = document.createElement("div");
+  overlay.style.cssText = `
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: #000;
+    color: #f44747;
+    z-index: 999999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, sans-serif;
+    text-align: center;
+  `;
+  overlay.innerHTML = `
+    <h1>You have been removed from the contest</h1>
+    <p style="color: #ccc;">Too many proctoring violations were detected.</p>
+  `;
+  document.body.appendChild(overlay);
+  if (document.fullscreenElement) document.exitFullscreen();
+}
+
+chrome.runtime.onMessage.addListener((message) => {
+  if (message.type === "KICKED") {
+    showKickedScreen();
+  }
 });
 
 // ===== Fullscreen Lockdown =====

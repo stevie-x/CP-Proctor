@@ -1,7 +1,7 @@
 const SUPABASE_URL = "https://hldwnmuptiidijgmuufb.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhsZHdubXVwdGlpZGlqZ211dWZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NjEyMzYsImV4cCI6MjA5NzMzNzIzNn0.WuMr_ebkW950OaF8-k25BdlM1F4KRpFvxBMC9wwuC6o";
+const KICK_THRESHOLD = 3;
 
-// Save event to chrome.storage.local
 function logEvent(type, data) {
   const event = {
     type: type,
@@ -17,7 +17,8 @@ function logEvent(type, data) {
   });
 }
 
-// Push a violation to Supabase
+let violationCount = 0;
+
 async function reportViolation(type, details) {
   const stored = await chrome.storage.local.get(["user", "activeSession"]);
   if (!stored.user || !stored.activeSession) return;
@@ -37,11 +38,20 @@ async function reportViolation(type, details) {
     })
   });
   console.log("[CP Proctor] Violation reported to Supabase:", type);
+
+  violationCount++;
+  console.log("[CP Proctor] Violation count:", violationCount);
+
+  if (violationCount >= KICK_THRESHOLD) {
+    chrome.storage.local.set({ contestActive: false });
+    chrome.tabs.query({}, (tabs) => {
+      tabs.forEach(tab => {
+        chrome.tabs.sendMessage(tab.id, { type: "KICKED" }, () => {});
+      });
+    });
+  }
 }
 
-const VIOLATION_TYPES = ["URL_VIOLATION", "LOCKDOWN_VIOLATION", "FULLSCREEN_EXIT"];
-
-// Tab switch detection
 chrome.tabs.onActivated.addListener((activeInfo) => {
   chrome.tabs.get(activeInfo.tabId, (tab) => {
     logEvent("TAB_SWITCH", { url: tab.url, title: tab.title });
@@ -49,7 +59,6 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
   });
 });
 
-// URL change detection
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete") {
     logEvent("URL_CHANGE", { url: tab.url, title: tab.title });
@@ -57,7 +66,6 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   }
 });
 
-// HackerRank URL Enforcement
 function checkContestUrl(currentUrl) {
   chrome.storage.local.get(["contestActive"], (result) => {
     if (!result.contestActive) return;
@@ -74,12 +82,12 @@ function checkContestUrl(currentUrl) {
   });
 }
 
-// Receive messages from content.js
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   logEvent(message.type, message.data);
 
   if (message.type === "CONTEST_STARTED") {
     chrome.storage.local.set({ contestActive: true });
+    violationCount = 0;
   }
   if (message.type === "FULLSCREEN_EXIT") {
     const details = { reason: "Exited fullscreen during active contest", url: message.data.url };
@@ -88,7 +96,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 });
 
-// ===== Codeforces API =====
 const CF_HANDLE = "stevie_x";
 const CF_API = "https://codeforces.com/api";
 
