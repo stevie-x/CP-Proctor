@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>CP Proctor — Organizer Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #121212;
+      color: #d4d4d4;
+      padding: 30px;
+    }
+    h1 {
+      color: #569cd6;
+      margin-bottom: 4px;
+    }
+    .subtitle {
+      color: #888;
+      margin-bottom: 24px;
+    }
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    input {
+      padding: 10px;
+      background: #2d2d2d;
+      border: 1px solid #444;
+      color: #d4d4d4;
+      border-radius: 4px;
+      font-size: 14px;
+      flex: 1;
+      max-width: 300px;
+    }
+    button {
+      padding: 10px 20px;
+      background: #569cd6;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #1e1e1e;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid #333;
+    }
+    th {
+      background: #2d2d2d;
+      color: #569cd6;
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+    .badge {
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .URL_VIOLATION { background: #4d3a1e; color: #dcdcaa; }
+    .LOCKDOWN_VIOLATION { background: #4d1e1e; color: #f44747; }
+    .FULLSCREEN_EXIT { background: #3a1e4d; color: #c586c0; }
+    .empty {
+      text-align: center;
+      padding: 40px;
+      color: #888;
+    }
+    .summary {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .card {
+      background: #1e1e1e;
+      padding: 16px 24px;
+      border-radius: 8px;
+      flex: 1;
+    }
+    .card .num {
+      font-size: 28px;
+      font-weight: bold;
+      color: #569cd6;
+    }
+    .card .label {
+      color: #888;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <h1>CP Proctor</h1>
+  <div class="subtitle">Organizer Dashboard</div>
+
+  <div class="controls">
+    <input type="text" id="sessionCodeInput" placeholder="Enter session code (e.g. EN0457)" />
+    <button id="loadBtn">Load Session</button>
+    <button id="refreshBtn">Refresh</button>
+  </div>
+
+  <div class="summary" id="summary"></div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>Violation Type</th>
+        <th>Details</th>
+        <th>Time</th>
+      </tr>
+    </thead>
+    <tbody id="violationsBody">
+      <tr><td colspan="4" class="empty">Enter a session code to load violations</td></tr>
+    </tbody>
+  </table>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>

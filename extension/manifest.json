@@ -9,15 +9,15 @@
     "storage"
   ],
   "background": {
-  "service_worker": "background.js"
-},
+    "service_worker": "background.js"
+  },
   "action": {
     "default_popup": "popup.html",
     "default_title": "CP Proctor"
   },
   "web_accessible_resources": [
     {
-      "resources": ["login.html", "login.js", "supabase.js"],
+      "resources": ["login.html", "login.js", "supabase.js", "dashboard.html", "dashboard.js"],
       "matches": ["<all_urls>"]
     }
   ],
