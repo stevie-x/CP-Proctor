@@ -38,6 +38,18 @@
 </head>
 <body>
   <h2>CP Proctor</h2>
+  <div id="sessionSection">
+    <div id="adminControls" style="display:none;">
+      <button id="createSessionBtn">Create Session</button>
+      <div id="sessionCode"></div>
+    </div>
+    <div id="userControls" style="display:none;">
+      <input type="text" id="joinCodeInput" placeholder="Enter session code" />
+      <button id="joinSessionBtn">Join Session</button>
+      <div id="joinStatus"></div>
+    </div>
+  </div>
+  <hr style="border-color: #444; margin: 10px 0;">
   <div id="events"></div>
   <button id="clear">Clear Events</button>
   <script src="popup.js"></script>
