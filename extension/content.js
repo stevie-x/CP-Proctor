@@ -37,3 +37,62 @@ document.addEventListener("paste", (e) => {
     }
   });
 });
+
+// ===== Fullscreen Lockdown =====
+
+function createLockdownOverlay() {
+  if (document.getElementById("cp-proctor-overlay")) return;
+
+  const overlay = document.createElement("div");
+  overlay.id = "cp-proctor-overlay";
+  overlay.style.cssText = `
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.95);
+    color: white;
+    z-index: 999999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, sans-serif;
+    text-align: center;
+  `;
+  overlay.innerHTML = `
+    <h1 style="color: #f44747;">Fullscreen Required</h1>
+    <p>You exited fullscreen mode. This has been reported.</p>
+    <button id="cp-reenter-fullscreen" style="
+      padding: 12px 24px;
+      font-size: 16px;
+      background: #569cd6;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 16px;
+    ">Re-enter Fullscreen</button>
+  `;
+  document.body.appendChild(overlay);
+
+  document.getElementById("cp-reenter-fullscreen").addEventListener("click", () => {
+    document.documentElement.requestFullscreen();
+  });
+}
+
+function removeLockdownOverlay() {
+  const overlay = document.getElementById("cp-proctor-overlay");
+  if (overlay) overlay.remove();
+}
+
+document.addEventListener("fullscreenchange", () => {
+  if (!document.fullscreenElement) {
+    chrome.runtime.sendMessage({
+      type: "FULLSCREEN_EXIT",
+      data: { url: window.location.href }
+    });
+    createLockdownOverlay();
+  } else {
+    removeLockdownOverlay();
+  }
+});
