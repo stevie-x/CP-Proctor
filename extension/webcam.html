@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>CP Proctor — Webcam Monitor</title>
+  <style>
+    body {
+      margin: 0;
+      background: #1e1e1e;
+      color: #ddd;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    h2 { color: #569cd6; margin-bottom: 4px; }
+    #status {
+      margin-bottom: 12px;
+      font-size: 14px;
+      color: #9cdcfe;
+    }
+    #status.error { color: #f44747; }
+    #status.ok { color: #6a9955; }
+    #video-container {
+      position: relative;
+      width: 480px;
+      height: 360px;
+      background: #000;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    video, canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 480px;
+      height: 360px;
+    }
+    #flagBanner {
+      display: none;
+      margin-top: 14px;
+      padding: 10px 18px;
+      border-radius: 6px;
+      background: #4a1717;
+      color: #f44747;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h2>CP Proctor — Webcam Monitor</h2>
+  <div id="status">Loading models…</div>
+  <div id="video-container">
+    <video id="video" autoplay muted playsinline></video>
+    <canvas id="overlay"></canvas>
+  </div>
+  <div id="flagBanner"></div>
+
+  <script src="face-api.min.js"></script>
+  <script src="webcam.js"></script>
+</body>
+</html>

@@ -94,6 +94,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     logEvent("LOCKDOWN_VIOLATION", details);
     reportViolation("LOCKDOWN_VIOLATION", details);
   }
+  // ===== Webcam face-detection violations (from webcam.js) =====
+  if (message.type === "FACE_NO_FACE_VIOLATION") {
+    reportViolation("FACE_NO_FACE_VIOLATION", message.data);
+  }
+  if (message.type === "FACE_MULTIPLE_VIOLATION") {
+    reportViolation("FACE_MULTIPLE_VIOLATION", message.data);
+  }
 });
 
 const CF_HANDLE = "stevie_x";
