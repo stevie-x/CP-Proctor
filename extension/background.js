@@ -89,17 +89,19 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     chrome.storage.local.set({ contestActive: true });
     violationCount = 0;
   }
+
+  if (message.type === "OPEN_WEBCAM") {
+    chrome.tabs.create({ url: chrome.runtime.getURL("webcam.html") });
+  }
+
   if (message.type === "FULLSCREEN_EXIT") {
     const details = { reason: "Exited fullscreen during active contest", url: message.data.url };
     logEvent("LOCKDOWN_VIOLATION", details);
     reportViolation("LOCKDOWN_VIOLATION", details);
   }
-  // ===== Webcam face-detection violations (from webcam.js) =====
-  if (message.type === "FACE_NO_FACE_VIOLATION") {
-    reportViolation("FACE_NO_FACE_VIOLATION", message.data);
-  }
-  if (message.type === "FACE_MULTIPLE_VIOLATION") {
-    reportViolation("FACE_MULTIPLE_VIOLATION", message.data);
+
+  if (message.type === "FACE_NO_FACE_VIOLATION" || message.type === "FACE_MULTIPLE_VIOLATION") {
+    reportViolation(message.type, message.data);
   }
 });
 

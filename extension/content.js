@@ -35,6 +35,7 @@ function createStartButton() {
           data: { url: window.location.href }
         });
         chrome.storage.local.set({ contestActive: true, contestUrl: window.location.href });
+        chrome.runtime.sendMessage({ type: "OPEN_WEBCAM" });
       });
     });
   });
