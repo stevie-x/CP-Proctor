@@ -11,18 +11,13 @@
       color: #d4d4d4;
       padding: 30px;
     }
-    h1 {
-      color: #569cd6;
-      margin-bottom: 4px;
-    }
-    .subtitle {
-      color: #888;
-      margin-bottom: 24px;
-    }
+    h1 { color: #569cd6; margin-bottom: 4px; }
+    .subtitle { color: #888; margin-bottom: 24px; }
     .controls {
       display: flex;
       gap: 10px;
-      margin-bottom: 24px;
+      margin-bottom: 12px;
+      align-items: center;
     }
     input {
       padding: 10px;
@@ -44,6 +39,16 @@
       font-size: 14px;
       font-weight: bold;
     }
+    button.secondary { background: #3a3a3a; }
+    .autoRefreshLabel {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: #ccc;
+      margin-left: auto;
+    }
+    #lastUpdated { color: #666; font-size: 12px; margin-bottom: 24px; }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -51,50 +56,24 @@
       border-radius: 8px;
       overflow: hidden;
     }
-    th, td {
-      padding: 12px 16px;
-      text-align: left;
-      border-bottom: 1px solid #333;
-    }
-    th {
-      background: #2d2d2d;
-      color: #569cd6;
-      font-size: 13px;
-      text-transform: uppercase;
-    }
-    .badge {
-      padding: 4px 10px;
-      border-radius: 4px;
-      font-size: 12px;
-      font-weight: bold;
-    }
+    th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid #333; }
+    th { background: #2d2d2d; color: #569cd6; font-size: 13px; text-transform: uppercase; }
+    .badge { padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; }
     .URL_VIOLATION { background: #4d3a1e; color: #dcdcaa; }
     .LOCKDOWN_VIOLATION { background: #4d1e1e; color: #f44747; }
     .FULLSCREEN_EXIT { background: #3a1e4d; color: #c586c0; }
-    .empty {
-      text-align: center;
-      padding: 40px;
-      color: #888;
-    }
-    .summary {
-      display: flex;
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-    .card {
-      background: #1e1e1e;
-      padding: 16px 24px;
-      border-radius: 8px;
-      flex: 1;
-    }
-    .card .num {
-      font-size: 28px;
-      font-weight: bold;
-      color: #569cd6;
-    }
-    .card .label {
-      color: #888;
-      font-size: 13px;
+    .FACE_NO_FACE_VIOLATION { background: #1e3a4d; color: #9cdcfe; }
+    .FACE_MULTIPLE_VIOLATION { background: #4d1e3a; color: #ce8fce; }
+    .GAZE_VIOLATION { background: #2d4d1e; color: #a9dc76; }
+    .empty { text-align: center; padding: 40px; color: #888; }
+    .summary { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+    .card { background: #1e1e1e; padding: 16px 24px; border-radius: 8px; flex: 1; min-width: 140px; }
+    .card .num { font-size: 28px; font-weight: bold; color: #569cd6; }
+    .card .label { color: #888; font-size: 13px; }
+    .new-row { animation: flash 1.5s ease-out; }
+    @keyframes flash {
+      from { background: #2d4d1e; }
+      to { background: transparent; }
     }
   </style>
 </head>
@@ -105,8 +84,19 @@
   <div class="controls">
     <input type="text" id="sessionCodeInput" placeholder="Enter session code (e.g. EN0457)" />
     <button id="loadBtn">Load Session</button>
-    <button id="refreshBtn">Refresh</button>
+    <button id="refreshBtn" class="secondary">Refresh Now</button>
+    <label class="autoRefreshLabel">
+      <input type="checkbox" id="autoRefreshToggle" checked style="width:auto; margin:0;" />
+      Auto-refresh every
+      <select id="refreshInterval" style="padding:4px; background:#2d2d2d; color:#d4d4d4; border:1px solid #444; border-radius:4px;">
+        <option value="3000">3s</option>
+        <option value="5000" selected>5s</option>
+        <option value="10000">10s</option>
+        <option value="30000">30s</option>
+      </select>
+    </label>
   </div>
+  <div id="lastUpdated">Not loaded yet</div>
 
   <div class="summary" id="summary"></div>
 
