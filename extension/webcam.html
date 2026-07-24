@@ -15,6 +15,7 @@
       padding: 20px;
     }
     h2 { color: #569cd6; margin-bottom: 4px; }
+    p.hint { color: #888; font-size: 13px; max-width: 480px; text-align: center; }
     #status {
       margin-bottom: 12px;
       font-size: 14px;
@@ -47,16 +48,79 @@
       color: #f44747;
       font-weight: bold;
     }
+    #perfStats {
+      margin-top: 10px;
+      font-size: 11px;
+      color: #666;
+      font-family: monospace;
+    }
+
+    /* ---- Calibration screen ---- */
+    #calibrationScreen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #lightMeter {
+      width: 480px;
+      height: 18px;
+      background: #2d2d2d;
+      border-radius: 9px;
+      overflow: hidden;
+      margin: 14px 0 6px 0;
+    }
+    #lightMeterFill.fill {
+      height: 100%;
+      transition: width 0.2s ease, background 0.2s ease;
+    }
+    #lightMeterFill.fill.bad { background: #f44747; }
+    #lightMeterFill.fill.warn { background: #dcdcaa; }
+    #lightMeterFill.fill.good { background: #6a9955; }
+    #lightMeterLabel { font-size: 13px; margin-bottom: 16px; }
+    #lightMeterLabel.bad { color: #f44747; }
+    #lightMeterLabel.warn { color: #dcdcaa; }
+    #lightMeterLabel.good { color: #6a9955; }
+
+    #beginBtn {
+      margin-top: 18px;
+      padding: 12px 28px;
+      font-size: 15px;
+      font-weight: bold;
+      background: #569cd6;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    #beginBtn:disabled {
+      background: #3a3a3a;
+      color: #777;
+      cursor: not-allowed;
+    }
+
+    #monitorScreen { display: none; flex-direction: column; align-items: center; }
   </style>
 </head>
 <body>
   <h2>CP Proctor — Webcam Monitor</h2>
   <div id="status">Loading models…</div>
+
   <div id="video-container">
     <video id="video" autoplay muted playsinline></video>
     <canvas id="overlay"></canvas>
   </div>
-  <div id="flagBanner"></div>
+
+  <div id="calibrationScreen">
+    <p class="hint">Before the contest starts, make sure your face is clearly and evenly lit. Poor lighting causes false "no face detected" flags — adjust your lighting until the meter below reads Good.</p>
+    <div id="lightMeter"><div id="lightMeterFill" class="fill"></div></div>
+    <div id="lightMeterLabel">Checking lighting…</div>
+    <button id="beginBtn" disabled>Begin Monitoring</button>
+  </div>
+
+  <div id="monitorScreen">
+    <div id="flagBanner"></div>
+    <div id="perfStats"></div>
+  </div>
 
   <script src="face-api.min.js"></script>
   <script src="webcam.js"></script>
