@@ -13,6 +13,7 @@
     h2 {
       color: #569cd6;
       margin: 0 0 10px 0;
+      font-family: Arial, sans-serif;
     }
     .event {
       padding: 5px;
@@ -27,31 +28,102 @@
     .VISIBILITY_CHANGE { border-color: #c586c0; }
     .time { color: #888; font-size: 10px; }
     button {
-      background: #f44747;
+      background: #569cd6;
       color: white;
       border: none;
-      padding: 5px 10px;
+      padding: 7px 12px;
       cursor: pointer;
-      margin-top: 10px;
+      margin-top: 6px;
+      border-radius: 4px;
+      font-family: Arial, sans-serif;
+      font-size: 12px;
     }
+    button.danger { background: #f44747; }
+    button.secondary { background: #3a3a3a; }
+    input {
+      padding: 7px;
+      background: #2d2d2d;
+      border: 1px solid #444;
+      color: #d4d4d4;
+      border-radius: 4px;
+      font-size: 12px;
+      box-sizing: border-box;
+      width: 100%;
+      margin-bottom: 6px;
+    }
+    #signedOutState, #noSessionState, #activeSessionState {
+      display: none;
+      font-family: Arial, sans-serif;
+      padding: 10px;
+      background: #2d2d2d;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+    #signedOutState p, #noSessionState p { margin: 0 0 8px 0; color: #ccc; }
+    #activeSessionState .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    #activeSessionState .code {
+      font-size: 16px;
+      font-weight: bold;
+      color: #6a9955;
+    }
+    #userBar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      font-size: 11px;
+      color: #888;
+      margin-bottom: 10px;
+    }
+    #userBar button { padding: 4px 8px; margin: 0; font-size: 11px; }
   </style>
 </head>
 <body>
   <h2>CP Proctor</h2>
-  <div id="sessionSection">
+
+  <div id="userBar" style="display:none;">
+    <span id="userEmail"></span>
+    <button id="signOutBtn" class="secondary">Sign Out</button>
+  </div>
+
+  <!-- Not signed in -->
+  <div id="signedOutState">
+    <p>You're not signed in. Sign in to join or run a proctored session.</p>
+    <button id="openLoginBtn">Sign In</button>
+  </div>
+
+  <!-- Signed in, no active session -->
+  <div id="noSessionState">
     <div id="adminControls" style="display:none;">
+      <p>No active session. Create one to start proctoring participants.</p>
       <button id="createSessionBtn">Create Session</button>
-      <div id="sessionCode"></div>
     </div>
     <div id="userControls" style="display:none;">
+      <p>You haven't joined a session yet. Nothing will be monitored until you do — ask your organizer for a session code.</p>
       <input type="text" id="joinCodeInput" placeholder="Enter session code" />
       <button id="joinSessionBtn">Join Session</button>
       <div id="joinStatus"></div>
     </div>
   </div>
+
+  <!-- Signed in, active session -->
+  <div id="activeSessionState">
+    <div class="row">
+      <div>
+        <div style="color:#888;">Active session</div>
+        <div class="code" id="activeSessionCode"></div>
+      </div>
+      <button id="leaveSessionBtn" class="danger">Leave</button>
+    </div>
+  </div>
+
   <hr style="border-color: #444; margin: 10px 0;">
   <div id="events"></div>
-  <button id="clear">Clear Events</button>
+  <button id="clear" class="secondary">Clear Events</button>
   <script src="popup.js"></script>
 </body>
 </html>
