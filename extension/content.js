@@ -22,9 +22,13 @@ function createStartButton() {
   `;
 
   btn.addEventListener("click", () => {
-    chrome.storage.local.get(["activeSession"], (result) => {
+    chrome.storage.local.get(["activeSession", "kicked"], (result) => {
       if (!result.activeSession) {
         alert("You must join a session before starting the contest. Open the CP Proctor extension and enter a session code.");
+        return;
+      }
+      if (result.kicked) {
+        alert("You were removed from this contest for too many proctoring violations and can't restart it. Contact your organizer, or leave and rejoin the session from the extension popup to reset.");
         return;
       }
 
