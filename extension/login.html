@@ -15,6 +15,7 @@
       margin: 0 0 20px 0;
       text-align: center;
     }
+    label { font-size: 12px; color: #aaa; }
     input {
       width: 100%;
       padding: 8px;
@@ -25,6 +26,7 @@
       border-radius: 4px;
       box-sizing: border-box;
     }
+    input.mismatch { border-color: #f44747; }
     button {
       width: 100%;
       padding: 10px;
@@ -56,21 +58,52 @@
     }
     .success { background: #1e4d2b; color: #4ec9b0; display: block !important; }
     .error { background: #4d1e1e; color: #f44747; display: block !important; }
+    #mismatchHint { color: #f44747; font-size: 11px; margin: -8px 0 8px 0; display: none; }
+    .links { text-align: center; margin-top: 4px; }
+    .links a { color: #569cd6; font-size: 12px; cursor: pointer; text-decoration: none; }
+    .links a:hover { text-decoration: underline; }
+
+    #forgotPanel { display: none; }
   </style>
 </head>
 <body>
   <h2>CP Proctor</h2>
-  <label>Email</label>
-  <input type="email" id="email" placeholder="you@example.com" />
-  <label>Password</label>
-  <input type="password" id="password" placeholder="••••••••" />
-  <label>Role</label>
-  <select id="role">
-    <option value="user">Participant</option>
-    <option value="admin">Admin / Organizer</option>
-  </select>
-  <button id="loginBtn">Sign In</button>
-  <button id="signupBtn">Sign Up</button>
+
+  <div id="authPanel">
+    <label>Email</label>
+    <input type="email" id="email" placeholder="you@example.com" />
+
+    <label>Password</label>
+    <input type="password" id="password" placeholder="••••••••" />
+
+    <label id="confirmLabel" style="display:none;">Confirm Password</label>
+    <input type="password" id="confirmPassword" placeholder="••••••••" style="display:none;" />
+    <div id="mismatchHint">Passwords don't match.</div>
+
+    <label>Role</label>
+    <select id="role">
+      <option value="user">Participant</option>
+      <option value="admin">Admin / Organizer</option>
+    </select>
+
+    <button id="loginBtn">Sign In</button>
+    <button id="signupBtn">Sign Up</button>
+
+    <div class="links">
+      <a id="forgotLink">Forgot password?</a>
+    </div>
+  </div>
+
+  <div id="forgotPanel">
+    <p style="color:#ccc; font-size:13px;">Enter your account email and we'll send a password reset link.</p>
+    <label>Email</label>
+    <input type="email" id="forgotEmail" placeholder="you@example.com" />
+    <button id="sendResetBtn">Send Reset Link</button>
+    <div class="links">
+      <a id="backToLoginLink">Back to sign in</a>
+    </div>
+  </div>
+
   <div id="status"></div>
   <script src="login.js"></script>
 </body>

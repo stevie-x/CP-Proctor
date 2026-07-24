@@ -19,10 +19,13 @@
     {
       "resources": [
         "login.html", "login.js", "supabase.js",
+        "reset-password.html", "reset-password.js",
         "dashboard.html", "dashboard.js",
         "webcam.html", "webcam.js", "face-api.min.js",
         "models/tiny_face_detector_model-weights_manifest.json",
-        "models/tiny_face_detector_model-shard1"
+        "models/tiny_face_detector_model-shard1",
+        "models/face_landmark_68_tiny_model-weights_manifest.json",
+        "models/face_landmark_68_tiny_model-shard1"
       ],
       "matches": ["<all_urls>"]
     }
